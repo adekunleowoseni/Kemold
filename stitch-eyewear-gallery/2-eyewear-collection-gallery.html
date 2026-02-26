@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Eyewear Collection Gallery | OpticModern</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="relative flex min-h-screen flex-col">
+<!-- Header -->
+<header class="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md">
+<div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+<div class="flex items-center gap-10">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-3xl font-bold">visibility</span>
+<h2 class="text-slate-900 dark:text-slate-100 text-xl font-black tracking-tight">OpticModern</h2>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-slate-600 dark:text-slate-400 text-sm font-semibold hover:text-primary transition-colors" href="#">Collections</a>
+<a class="text-slate-600 dark:text-slate-400 text-sm font-semibold hover:text-primary transition-colors" href="#">Eye Care</a>
+<a class="text-slate-600 dark:text-slate-400 text-sm font-semibold hover:text-primary transition-colors" href="#">Virtual Try-On</a>
+<a class="text-slate-600 dark:text-slate-400 text-sm font-semibold hover:text-primary transition-colors" href="#">Book Exam</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="h-10 w-64 rounded-full border-none bg-slate-100 dark:bg-slate-800 pl-10 text-sm focus:ring-2 focus:ring-primary" placeholder="Search frames..." type="text"/>
+</div>
+<button class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined">shopping_cart</span>
+</button>
+<button class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined">person</span>
+</button>
+</div>
+</div>
+</header>
+<main class="mx-auto w-full max-w-7xl px-6 py-8">
+<!-- Breadcrumbs & Title -->
+<div class="mb-8">
+<nav class="mb-4 flex items-center gap-2 text-sm text-slate-500">
+<a class="hover:text-primary" href="#">Home</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="font-medium text-slate-900 dark:text-slate-100">Collections</span>
+</nav>
+<h1 class="text-4xl font-black tracking-tight text-slate-900 dark:text-slate-100 sm:text-5xl">Eyewear Collection</h1>
+<p class="mt-4 max-w-2xl text-lg text-slate-600 dark:text-slate-400">Discover premium frames designed for every face and lifestyle. Expertly crafted for clarity and comfort.</p>
+</div>
+<div class="flex flex-col gap-8 lg:flex-row">
+<!-- Sidebar Filters -->
+<aside class="w-full shrink-0 lg:w-64">
+<div class="sticky top-24 space-y-8">
+<!-- Age Group -->
+<div>
+<h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-slate-400">Age Group</h3>
+<div class="space-y-2">
+<label class="flex cursor-pointer items-center gap-3 rounded-lg p-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-slate-500">child_care</span>
+<span class="text-sm font-medium">Kids</span>
+<input class="ml-auto rounded border-slate-300 text-primary focus:ring-primary" type="checkbox"/>
+</label>
+<label class="flex cursor-pointer items-center gap-3 rounded-lg p-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-slate-500">face</span>
+<span class="text-sm font-medium">Teens</span>
+<input class="ml-auto rounded border-slate-300 text-primary focus:ring-primary" type="checkbox"/>
+</label>
+<label class="flex cursor-pointer items-center gap-3 rounded-lg bg-primary/10 p-2 text-primary transition-colors">
+<span class="material-symbols-outlined">group</span>
+<span class="text-sm font-bold">Adults</span>
+<input checked="" class="ml-auto rounded border-slate-300 text-primary focus:ring-primary" type="checkbox"/>
+</label>
+</div>
+</div>
+<!-- Frame Shape -->
+<div>
+<h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-slate-400">Frame Shape</h3>
+<div class="grid grid-cols-2 gap-2">
+<button class="rounded-lg border border-slate-200 dark:border-slate-800 p-2 text-xs font-semibold hover:border-primary hover:text-primary transition-all">Rectangle</button>
+<button class="rounded-lg border border-slate-200 dark:border-slate-800 p-2 text-xs font-semibold hover:border-primary hover:text-primary transition-all">Round</button>
+<button class="rounded-lg border border-slate-200 dark:border-slate-800 p-2 text-xs font-semibold hover:border-primary hover:text-primary transition-all">Cat Eye</button>
+<button class="rounded-lg border border-slate-200 dark:border-slate-800 p-2 text-xs font-semibold hover:border-primary hover:text-primary transition-all">Aviator</button>
+<button class="rounded-lg border border-slate-200 dark:border-slate-800 p-2 text-xs font-semibold hover:border-primary hover:text-primary transition-all">Oval</button>
+<button class="rounded-lg border border-slate-200 dark:border-slate-800 p-2 text-xs font-semibold hover:border-primary hover:text-primary transition-all">Square</button>
+</div>
+</div>
+<!-- Material -->
+<div>
+<h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-slate-400">Material</h3>
+<div class="space-y-2">
+<label class="flex items-center gap-3 text-sm font-medium">
+<input class="rounded border-slate-300 text-primary focus:ring-primary" type="checkbox"/>
+                                    Acetate
+                                </label>
+<label class="flex items-center gap-3 text-sm font-medium">
+<input class="rounded border-slate-300 text-primary focus:ring-primary" type="checkbox"/>
+                                    Metal
+                                </label>
+<label class="flex items-center gap-3 text-sm font-medium">
+<input class="rounded border-slate-300 text-primary focus:ring-primary" type="checkbox"/>
+                                    Titanium
+                                </label>
+<label class="flex items-center gap-3 text-sm font-medium">
+<input class="rounded border-slate-300 text-primary focus:ring-primary" type="checkbox"/>
+                                    Sustainable
+                                </label>
+</div>
+</div>
+<!-- Price Range -->
+<div>
+<h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-slate-400">Price Range</h3>
+<input class="h-2 w-full cursor-pointer appearance-none rounded-lg bg-slate-200 dark:bg-slate-800 accent-primary" max="500" min="50" type="range"/>
+<div class="mt-2 flex justify-between text-xs font-bold">
+<span>$50</span>
+<span>$500+</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Product Grid -->
+<div class="flex-1">
+<div class="mb-6 flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+<p class="text-sm font-medium text-slate-500">Showing 24 of 156 products</p>
+<select class="rounded-lg border-none bg-transparent text-sm font-bold focus:ring-0">
+<option>Newest Arrivals</option>
+<option>Price: Low to High</option>
+<option>Price: High to Low</option>
+<option>Popularity</option>
+</select>
+</div>
+<div class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+<!-- Product Card 1 -->
+<div class="group relative flex flex-col">
+<div class="relative aspect-[4/3] overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800">
+<img class="h-full w-full object-contain object-center transition-transform duration-500 group-hover:scale-110" data-alt="Modern black designer glasses on white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9H-h2qeXSGw465BtY78V4LEcqWDnLd1SQ2MrEZG3L0YnA7sP15kj2bru-swvcZQNiDkfmo2SxuLjWDLdOeHJfSoPMgNjue-XMf8nId1c0_i64UC9523AVXVFcZ9eeiXDaeW0HfzEs3XWTTkF1fArxh5shhrWoSjRIzsO2PjNAa2lJgpdwXucxtJNQv0mz7T2siC-_FG3yTrNR1daW2dUEbNgcBNXaBXbSXFtn1mDMAYG3o_j7xlrrOkXSZXpqPWWKXGh5UwOG"/>
+<button class="absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 rounded-full bg-white px-4 py-2 text-xs font-bold text-slate-900 opacity-0 shadow-lg transition-all group-hover:translate-y-0 group-hover:opacity-100">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">visibility</span>
+                                        Virtual Try-On
+                                    </span>
+</button>
+<span class="absolute right-4 top-4 rounded-full bg-primary px-2 py-1 text-[10px] font-black uppercase tracking-widest text-white">New</span>
+</div>
+<div class="mt-4 flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">Classic Noir</h3>
+<p class="text-sm font-black text-primary">$185</p>
+</div>
+<p class="text-xs text-slate-500">Handcrafted Acetate • Rectangle</p>
+<div class="mt-2 flex gap-1">
+<div class="h-3 w-3 rounded-full bg-black ring-1 ring-offset-2 ring-primary"></div>
+<div class="h-3 w-3 rounded-full bg-amber-900 ring-1 ring-slate-200"></div>
+<div class="h-3 w-3 rounded-full bg-slate-400 ring-1 ring-slate-200"></div>
+</div>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="group relative flex flex-col">
+<div class="relative aspect-[4/3] overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800">
+<img class="h-full w-full object-contain object-center transition-transform duration-500 group-hover:scale-110" data-alt="Minimalist gold wire rimmed glasses" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiNVl8L3nnbYLkzw7FDCl2keqVwgWPFdcBbw_MFgckHWYSn3s6JNAgC7HbBjCJ4vqeqO8PZh-e1MJ2bGZh8yjOTEcZPTyAYVd9YUWtNqs8ES12NQcAGUzHerRA1vP8xef8brOjddLO34BXm00n9Vfc20vA7JIof6XyoYG7H0UuteLwg7JDHI_vN2uD0kCfrDs2RHH-LHmB42LEj3CLgqFM9hC3Tc_jKci45jnNvXHhxT3S2m2N9xQaFuX1mTrkA72IRsvYOP4b"/>
+<button class="absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 rounded-full bg-white px-4 py-2 text-xs font-bold text-slate-900 opacity-0 shadow-lg transition-all group-hover:translate-y-0 group-hover:opacity-100">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">visibility</span>
+                                        Virtual Try-On
+                                    </span>
+</button>
+</div>
+<div class="mt-4 flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">The Minimalist</h3>
+<p class="text-sm font-black text-primary">$210</p>
+</div>
+<p class="text-xs text-slate-500">Premium Titanium • Round</p>
+<div class="mt-2 flex gap-1">
+<div class="h-3 w-3 rounded-full bg-yellow-600 ring-1 ring-offset-2 ring-primary"></div>
+<div class="h-3 w-3 rounded-full bg-slate-200 ring-1 ring-slate-200"></div>
+</div>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="group relative flex flex-col">
+<div class="relative aspect-[4/3] overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800">
+<img class="h-full w-full object-contain object-center transition-transform duration-500 group-hover:scale-110" data-alt="Clear frames with dark lenses" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDksbvR6nMduxYsdlT218J2wiEfZrA7oFGkq9fLjvESH-eeL6tgxnGPMECaSawBK8pFz6VO1AFtZoAzAmC_dKdRDmz8S_SzcBAeuTkh64I_BUwn_2RUaSgU0MspCr6fijdHOQ0Ehkx7t7ZdLV__W9CSuXbNvpC3udYxrT7l-NHOaZsHJjZ1t-A7mqdClNnWPO_30GJzpthaSbLaSgMqDMMmYfNYwq8xq9jLbTgTqyZqxeLgBQKIsZ3CaNRsfwUV1D0Q59dfPAGu"/>
+<button class="absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 rounded-full bg-white px-4 py-2 text-xs font-bold text-slate-900 opacity-0 shadow-lg transition-all group-hover:translate-y-0 group-hover:opacity-100">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">visibility</span>
+                                        Virtual Try-On
+                                    </span>
+</button>
+<span class="absolute right-4 top-4 rounded-full bg-slate-900 px-2 py-1 text-[10px] font-black uppercase tracking-widest text-white">Best Seller</span>
+</div>
+<div class="mt-4 flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">Crystal Vision</h3>
+<p class="text-sm font-black text-primary">$195</p>
+</div>
+<p class="text-xs text-slate-500">Eco-Acetate • Square</p>
+<div class="mt-2 flex gap-1">
+<div class="h-3 w-3 rounded-full bg-slate-100/50 border border-slate-300 ring-1 ring-offset-2 ring-primary"></div>
+<div class="h-3 w-3 rounded-full bg-blue-100/50 border border-slate-300 ring-1 ring-slate-200"></div>
+</div>
+</div>
+</div>
+<!-- Product Card 4 -->
+<div class="group relative flex flex-col">
+<div class="relative aspect-[4/3] overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800">
+<img class="h-full w-full object-contain object-center transition-transform duration-500 group-hover:scale-110" data-alt="Stylish tortoise shell glasses" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVJXws_aw_rM6j8bxkdulhtmRD8AcRKqtNDxhlqtgRO7W_595AD6JltwFxE3JhafONtRBj42TmMQEmLipEQ4gH5S0OUppuDPcUKes-h-DEYyYkAsQzwmi0DRSWQHZqOFhJ5I7AtvA6yc9OD3FEjDE904g5JHgAC9v6rvVDBoDlI5tb3vY_71v8YUiUkCXy3v2kvKVANugg2P4eDhyw0x6aEhM89ew4lmgr_aPLbGpXBfWhkzZAL7Qgy7gbOfY_uYVowrvz1ioA"/>
+<button class="absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 rounded-full bg-white px-4 py-2 text-xs font-bold text-slate-900 opacity-0 shadow-lg transition-all group-hover:translate-y-0 group-hover:opacity-100">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">visibility</span>
+                                        Virtual Try-On
+                                    </span>
+</button>
+</div>
+<div class="mt-4 flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">Amber Archive</h3>
+<p class="text-sm font-black text-primary">$165</p>
+</div>
+<p class="text-xs text-slate-500">Hand-polished Shell • Cat Eye</p>
+<div class="mt-2 flex gap-1">
+<div class="h-3 w-3 rounded-full bg-orange-900 ring-1 ring-offset-2 ring-primary"></div>
+<div class="h-3 w-3 rounded-full bg-orange-700 ring-1 ring-slate-200"></div>
+</div>
+</div>
+</div>
+<!-- Product Card 5 -->
+<div class="group relative flex flex-col">
+<div class="relative aspect-[4/3] overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800">
+<img class="h-full w-full object-contain object-center transition-transform duration-500 group-hover:scale-110" data-alt="Rose gold metal glasses" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2K3v_vk_VNi-Vf0walwsp9ZcACl-Yrfd1ycSJ1BJr0ASTy0sq5RjaUhbiFJrDfUdybjfjnkpf1L2D_EYp8DYFsQ5pImS8RG0Ux10_bhsLWMEDdyz3MHAT0Hq7aIuxExKyxwCx61A9S62fn96JpvMt2Etm0MgqmwAcYjjg0K32RIf6UGdyVd8b4bFb4u4O-CCiKoeMM3F-FQ0E8pczqgb_nsF4QvXvu-4MVuXV-yc59_Yxum3c6eNZA33bE7Ghf9txs69LrZMz"/>
+<button class="absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 rounded-full bg-white px-4 py-2 text-xs font-bold text-slate-900 opacity-0 shadow-lg transition-all group-hover:translate-y-0 group-hover:opacity-100">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">visibility</span>
+                                        Virtual Try-On
+                                    </span>
+</button>
+</div>
+<div class="mt-4 flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">Rose Elegance</h3>
+<p class="text-sm font-black text-primary">$240</p>
+</div>
+<p class="text-xs text-slate-500">Rose Gold Metal • Oval</p>
+<div class="mt-2 flex gap-1">
+<div class="h-3 w-3 rounded-full bg-rose-200 ring-1 ring-offset-2 ring-primary"></div>
+<div class="h-3 w-3 rounded-full bg-rose-300 ring-1 ring-slate-200"></div>
+</div>
+</div>
+</div>
+<!-- Product Card 6 -->
+<div class="group relative flex flex-col">
+<div class="relative aspect-[4/3] overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800">
+<img class="h-full w-full object-contain object-center transition-transform duration-500 group-hover:scale-110" data-alt="Bold blue glasses frames" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJCZ_TVdQoze6sclNa5YWZXWWq3g4t7yeVoHDjV-b03LuR2wukCTlObSf0uimoWqpJi2CJMtXD9l9yrGBhniDkiSvHH0oKtRSF_HKtZpgHKp3OZbtN1b0ilIvwOL4YSedvz-eql5_g9N_86_3bYTwO7cgZmV3-nMJBl_-Krh5d8CpqG5kJ-uqPGKqa1gp0Xt0txrCNkNg44Rd6gWV0hkbRB9zPOz3QfsZjnpO7myI2nYHnalT5wUq0a6tnT7jpZiileQmL27Do"/>
+<button class="absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-4 rounded-full bg-white px-4 py-2 text-xs font-bold text-slate-900 opacity-0 shadow-lg transition-all group-hover:translate-y-0 group-hover:opacity-100">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">visibility</span>
+                                        Virtual Try-On
+                                    </span>
+</button>
+</div>
+<div class="mt-4 flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">Modern Cobalt</h3>
+<p class="text-sm font-black text-primary">$175</p>
+</div>
+<p class="text-xs text-slate-500">Recycled Bio-Polymers • Square</p>
+<div class="mt-2 flex gap-1">
+<div class="h-3 w-3 rounded-full bg-blue-800 ring-1 ring-offset-2 ring-primary"></div>
+<div class="h-3 w-3 rounded-full bg-blue-900 ring-1 ring-slate-200"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="mt-12 flex items-center justify-center gap-2">
+<button class="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary font-bold text-white">1</button>
+<button class="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold">2</button>
+<button class="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold">3</button>
+<span class="px-2">...</span>
+<button class="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold">12</button>
+<button class="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="mt-auto border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark py-12">
+<div class="mx-auto max-w-7xl px-6">
+<div class="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4">
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-2xl font-bold">visibility</span>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-black tracking-tight">OpticModern</h2>
+</div>
+<p class="text-sm text-slate-500 leading-relaxed">Redefining eyewear with a focus on modern aesthetics, clinical precision, and sustainable craftsmanship.</p>
+<div class="flex gap-4">
+<a class="text-slate-400 hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">public</span></a>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">alternate_email</span></a>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">share</span></a>
+</div>
+</div>
+<div>
+<h4 class="mb-6 text-sm font-black uppercase tracking-widest text-slate-900 dark:text-slate-100">Shop</h4>
+<ul class="space-y-4 text-sm text-slate-500 font-medium">
+<li><a class="hover:text-primary transition-colors" href="#">Women's Collection</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Men's Collection</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Kids' Collection</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Sunglasses</a></li>
+</ul>
+</div>
+<div>
+<h4 class="mb-6 text-sm font-black uppercase tracking-widest text-slate-900 dark:text-slate-100">Eye Care</h4>
+<ul class="space-y-4 text-sm text-slate-500 font-medium">
+<li><a class="hover:text-primary transition-colors" href="#">Comprehensive Exams</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Virtual Consultations</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Lens Technology</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Fit Guide</a></li>
+</ul>
+</div>
+<div>
+<h4 class="mb-6 text-sm font-black uppercase tracking-widest text-slate-900 dark:text-slate-100">Newsletter</h4>
+<p class="mb-4 text-sm text-slate-500 leading-relaxed">Get first access to new collections and clinical insights.</p>
+<div class="flex gap-2">
+<input class="w-full rounded-lg border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-3 text-sm focus:ring-primary" placeholder="Email address" type="email"/>
+<button class="rounded-lg bg-primary px-4 py-2 text-sm font-bold text-white hover:bg-primary/90">Join</button>
+</div>
+</div>
+</div>
+<div class="mt-12 border-t border-slate-100 dark:border-slate-800 pt-8 text-center text-xs text-slate-400">
+<p>© 2024 OpticModern Eyewear. All rights reserved. Professional Care, Exceptional Style.</p>
+</div>
+</div>
+</footer>
+</div>
+</body></html>
