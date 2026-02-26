@@ -59,9 +59,6 @@ export default function Header() {
         >
           Book Appointment
         </Link>
-        <div className="bg-slate-200 dark:bg-slate-700 aspect-square rounded-full size-10 flex items-center justify-center overflow-hidden border border-slate-100 dark:border-slate-800">
-          <span className="material-symbols-outlined text-slate-500">person</span>
-        </div>
       </div>
     </header>
   );

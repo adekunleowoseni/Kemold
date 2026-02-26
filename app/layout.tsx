@@ -9,7 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "OpticVision | Premium Eye Care & Eyewear",
+  title: "Kemold Opticals | Premium Eye Care & Eyewear",
   description: "Precision eye care and curated eyewear for every generation.",
 };
 

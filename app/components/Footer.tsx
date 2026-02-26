@@ -48,7 +48,7 @@ export default function Footer() {
             </li>
             <li className="flex items-center gap-3">
               <span className="material-symbols-outlined text-primary text-sm">call</span>
-              +44 (0) 20 7946 0000
+              +234 (0) 70 3132 2989
             </li>
             <li className="flex items-center gap-3">
               <span className="material-symbols-outlined text-primary text-sm">mail</span>
