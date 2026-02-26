@@ -7,7 +7,7 @@ export default function Footer() {
         <div className="flex flex-col gap-6">
           <div className="flex items-center gap-3">
             <span className="material-symbols-outlined text-3xl text-primary">visibility</span>
-            <span className="text-2xl font-bold">OpticVision</span>
+            <span className="text-2xl font-bold">Kemold Opticals</span>
           </div>
           <p className="text-slate-400 text-sm leading-relaxed">
             Providing world-class eye care services and premium eyewear since 1994. Your vision is our expertise.

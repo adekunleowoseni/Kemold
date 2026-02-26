@@ -11,7 +11,7 @@ export default function Header() {
             <span className="material-symbols-outlined text-3xl">visibility</span>
           </span>
           <h2 className="text-navy dark:text-white text-xl font-bold tracking-tight">
-            OpticVision
+          Kemold Opticals
           </h2>
         </Link>
         <nav className="hidden lg:flex items-center gap-8">

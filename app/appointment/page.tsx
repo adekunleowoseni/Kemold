@@ -1,13 +1,173 @@
+"use client";
+
 import Link from "next/link";
+import { useState, useMemo } from "react";
 import Header from "../components/Header";
 
+const MONTH_NAMES = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
+
+const TIME_SLOTS = [
+  "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
+  "12:00 PM", "12:30 PM", "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM",
+  "03:00 PM", "03:30 PM", "04:00 PM", "04:30 PM",
+];
+
+const SERVICES = [
+  { id: "eye-test", name: "Comprehensive Eye Test", price: "£25.00" },
+  { id: "contact-lens", name: "Contact Lens Consultation", price: "£35.00" },
+  { id: "frame-repair", name: "Frame Repair & adjustment", price: "Free" },
+];
+
+function getDaysInMonth(year: number, month: number) {
+  const first = new Date(year, month, 1);
+  const last = new Date(year, month + 1, 0);
+  const count = last.getDate();
+  const firstWeekday = (first.getDay() + 6) % 7;
+  return { count, firstWeekday };
+}
+
+function isPast(year: number, month: number, day: number) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const cell = new Date(year, month, day);
+  return cell < today;
+}
+
+function formatDateKey(year: number, month: number, day: number) {
+  const m = String(month + 1).padStart(2, "0");
+  const d = String(day).padStart(2, "0");
+  return `${year}-${m}-${d}`;
+}
+
+function formatDisplayDate(dateStr: string) {
+  const d = new Date(dateStr + "T12:00:00");
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+}
+
 export default function AppointmentPage() {
+  const today = useMemo(() => new Date(), []);
+  const [service, setService] = useState(SERVICES[0]);
+  const [location, setLocation] = useState<"London City Center" | null>("London City Center");
+  const [viewYear, setViewYear] = useState(today.getFullYear());
+  const [viewMonth, setViewMonth] = useState(today.getMonth());
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const [submitError, setSubmitError] = useState("");
+
+  const calendar = useMemo(() => {
+    const { count, firstWeekday } = getDaysInMonth(viewYear, viewMonth);
+    const prevMonth = viewMonth === 0 ? 11 : viewMonth - 1;
+    const prevYear = viewMonth === 0 ? viewYear - 1 : viewYear;
+    const prevCount = new Date(viewYear, viewMonth, 0).getDate();
+    const cells: { type: "prev" | "curr" | "next"; year: number; month: number; day: number }[] = [];
+    for (let i = 0; i < firstWeekday; i++) {
+      const day = prevCount - firstWeekday + 1 + i;
+      cells.push({ type: "prev", year: prevYear, month: prevMonth, day });
+    }
+    for (let day = 1; day <= count; day++) {
+      cells.push({ type: "curr", year: viewYear, month: viewMonth, day });
+    }
+    const rest = 42 - cells.length;
+    for (let day = 1; day <= rest; day++) {
+      cells.push({ type: "next", year: viewMonth === 11 ? viewYear + 1 : viewYear, month: viewMonth === 11 ? 0 : viewMonth + 1, day });
+    }
+    return cells;
+  }, [viewYear, viewMonth]);
+
+  const prevMonth = () => {
+    if (viewMonth === 0) {
+      setViewYear((y) => y - 1);
+      setViewMonth(11);
+    } else {
+      setViewMonth((m) => m - 1);
+    }
+  };
+
+  const nextMonth = () => {
+    if (viewMonth === 11) {
+      setViewYear((y) => y + 1);
+      setViewMonth(0);
+    } else {
+      setViewMonth((m) => m + 1);
+    }
+  };
+
+  const handleConfirmBooking = async () => {
+    if (!selectedDate || !selectedTime) {
+      setSubmitStatus("error");
+      setSubmitError("Please select a date and time.");
+      return;
+    }
+    if (!location) {
+      setSubmitStatus("error");
+      setSubmitError("Please select a location.");
+      return;
+    }
+    const trim = (s: string) => s.trim();
+    if (!trim(firstName) || !trim(lastName) || !trim(email) || !trim(phone)) {
+      setSubmitStatus("error");
+      setSubmitError("Please fill in all required details (first name, last name, email, phone).");
+      return;
+    }
+
+    setSubmitting(true);
+    setSubmitStatus("idle");
+    setSubmitError("");
+
+    try {
+      const res = await fetch("/api/booking/telegram", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          service: service.name,
+          servicePrice: service.price,
+          location,
+          date: formatDisplayDate(selectedDate),
+          time: selectedTime,
+          firstName: trim(firstName),
+          lastName: trim(lastName),
+          email: trim(email),
+          phone: trim(phone),
+          dateOfBirth: trim(dateOfBirth) || undefined,
+        }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        setSubmitStatus("error");
+        setSubmitError(data.error ?? "Booking could not be sent.");
+        return;
+      }
+
+      setSubmitStatus("success");
+    } catch (e) {
+      setSubmitStatus("error");
+      setSubmitError(e instanceof Error ? e.message : "Network error.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const summaryDate = selectedDate && selectedTime
+    ? `${formatDisplayDate(selectedDate)} at ${selectedTime}`
+    : "—";
+
   return (
     <div className="relative flex min-h-screen w-full flex-col">
       <Header />
       <main className="flex-grow">
         <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6">
-          {/* Hero Section */}
           <div className="mb-10">
             <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white mb-3">
               Book your eye test
@@ -17,7 +177,6 @@ export default function AppointmentPage() {
             </p>
           </div>
 
-          {/* Progress Tracker */}
           <div className="mb-12">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-semibold text-primary">Step 1 of 4: Select Service</span>
@@ -29,56 +188,60 @@ export default function AppointmentPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Form Content */}
             <div className="lg:col-span-2 space-y-12">
-              {/* Section 1: Service Selection */}
+              {/* Services */}
               <section>
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold">1</div>
                   <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Choose a service</h2>
                 </div>
                 <div className="space-y-4">
-                  <label className="group relative flex items-center gap-4 p-5 rounded-xl border-2 border-primary bg-primary/5 cursor-pointer hover:border-primary transition-all">
-                    <input defaultChecked className="w-5 h-5 text-primary border-slate-300 focus:ring-primary" name="service" type="radio" />
-                    <div className="flex-grow">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="font-bold text-slate-900 dark:text-white">Comprehensive Eye Test</span>
-                        <span className="text-sm font-semibold text-primary">£25.00</span>
+                  {SERVICES.map((s) => (
+                    <label
+                      key={s.id}
+                      className={`group relative flex items-center gap-4 p-5 rounded-xl border-2 cursor-pointer transition-all ${
+                        service.id === s.id
+                          ? "border-primary bg-primary/5"
+                          : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-primary/50"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="service"
+                        checked={service.id === s.id}
+                        onChange={() => setService(s)}
+                        className="w-5 h-5 text-primary border-slate-300 focus:ring-primary"
+                      />
+                      <div className="flex-grow">
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="font-bold text-slate-900 dark:text-white">{s.name}</span>
+                          <span className="text-sm font-semibold text-primary">{s.price}</span>
+                        </div>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">
+                          {s.id === "eye-test" && "A full 30-minute health check and vision test using advanced OCT technology."}
+                          {s.id === "contact-lens" && "Specialist fitting, trials, and health check for new and existing lens wearers."}
+                          {s.id === "frame-repair" && "Quick fix for loose screws, broken frames, or fit adjustments."}
+                        </p>
                       </div>
-                      <p className="text-sm text-slate-600 dark:text-slate-400">A full 30-minute health check and vision test using advanced OCT technology.</p>
-                    </div>
-                  </label>
-                  <label className="group relative flex items-center gap-4 p-5 rounded-xl border-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 cursor-pointer hover:border-primary/50 transition-all">
-                    <input className="w-5 h-5 text-primary border-slate-300 focus:ring-primary" name="service" type="radio" />
-                    <div className="flex-grow">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="font-bold text-slate-900 dark:text-white">Contact Lens Consultation</span>
-                        <span className="text-sm font-semibold text-primary">£35.00</span>
-                      </div>
-                      <p className="text-sm text-slate-600 dark:text-slate-400">Specialist fitting, trials, and health check for new and existing lens wearers.</p>
-                    </div>
-                  </label>
-                  <label className="group relative flex items-center gap-4 p-5 rounded-xl border-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 cursor-pointer hover:border-primary/50 transition-all">
-                    <input className="w-5 h-5 text-primary border-slate-300 focus:ring-primary" name="service" type="radio" />
-                    <div className="flex-grow">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="font-bold text-slate-900 dark:text-white">Frame Repair & adjustment</span>
-                        <span className="text-sm font-semibold text-primary">Free</span>
-                      </div>
-                      <p className="text-sm text-slate-600 dark:text-slate-400">Quick fix for loose screws, broken frames, or fit adjustments.</p>
-                    </div>
-                  </label>
+                    </label>
+                  ))}
                 </div>
               </section>
 
-              {/* Section 2: Location Selection */}
+              {/* Location */}
               <section>
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 flex items-center justify-center font-bold">2</div>
                   <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Choose location</h2>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-4 border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-900 hover:shadow-md transition-shadow">
+                  <div
+                    className={`p-4 border rounded-xl bg-white dark:bg-slate-900 transition-shadow ${
+                      location === "London City Center"
+                        ? "border-primary shadow-md"
+                        : "border-slate-200 dark:border-slate-800 hover:shadow-md"
+                    }`}
+                  >
                     <div className="flex items-start justify-between mb-3">
                       <div>
                         <h3 className="font-bold text-slate-900 dark:text-white">London City Center</h3>
@@ -94,11 +257,15 @@ export default function AppointmentPage() {
                         }}
                       />
                     </div>
-                    <button className="w-full py-2 border border-primary text-primary font-semibold rounded-lg text-sm hover:bg-primary hover:text-white transition-colors">
+                    <button
+                      type="button"
+                      onClick={() => setLocation("London City Center")}
+                      className="w-full py-2 border border-primary text-primary font-semibold rounded-lg text-sm hover:bg-primary hover:text-white transition-colors"
+                    >
                       Select Branch
                     </button>
                   </div>
-                  <div className="p-4 border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-900 hover:shadow-md transition-shadow opacity-60">
+                  <div className="p-4 border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-900 opacity-60">
                     <div className="flex items-start justify-between mb-3">
                       <div>
                         <h3 className="font-bold text-slate-900 dark:text-white">West End Clinic</h3>
@@ -107,29 +274,41 @@ export default function AppointmentPage() {
                       <span className="material-symbols-outlined text-slate-400">location_on</span>
                     </div>
                     <div className="h-32 rounded-lg bg-slate-100 dark:bg-slate-800 mb-3 overflow-hidden" />
-                    <button className="w-full py-2 border border-slate-300 dark:border-slate-700 text-slate-500 font-semibold rounded-lg text-sm cursor-not-allowed">
+                    <button type="button" disabled className="w-full py-2 border border-slate-300 dark:border-slate-700 text-slate-500 font-semibold rounded-lg text-sm cursor-not-allowed">
                       Coming Soon
                     </button>
                   </div>
                 </div>
               </section>
 
-              {/* Section 3: Date & Time Picker */}
+              {/* Date & Time Picker */}
               <section>
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 flex items-center justify-center font-bold">3</div>
                   <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Pick date & time</h2>
                 </div>
                 <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
-                  <div className="flex border-b border-slate-200 dark:border-slate-800">
-                    <div className="flex-1 p-6 border-r border-slate-200 dark:border-slate-800">
+                  <div className="flex border-b border-slate-200 dark:border-slate-800 flex-col sm:flex-row">
+                    <div className="flex-1 p-6 border-b sm:border-b-0 sm:border-r border-slate-200 dark:border-slate-800">
                       <div className="flex items-center justify-between mb-6">
-                        <h3 className="font-bold text-slate-900 dark:text-white">October 2023</h3>
+                        <h3 className="font-bold text-slate-900 dark:text-white">
+                          {MONTH_NAMES[viewMonth]} {viewYear}
+                        </h3>
                         <div className="flex gap-2">
-                          <button type="button" className="p-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800">
+                          <button
+                            type="button"
+                            onClick={prevMonth}
+                            className="p-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800"
+                            aria-label="Previous month"
+                          >
                             <span className="material-symbols-outlined">chevron_left</span>
                           </button>
-                          <button type="button" className="p-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800">
+                          <button
+                            type="button"
+                            onClick={nextMonth}
+                            className="p-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800"
+                            aria-label="Next month"
+                          >
                             <span className="material-symbols-outlined">chevron_right</span>
                           </button>
                         </div>
@@ -138,38 +317,60 @@ export default function AppointmentPage() {
                         <span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span>
                       </div>
                       <div className="grid grid-cols-7 gap-2">
-                        <div className="p-2 text-slate-300">28</div>
-                        <div className="p-2 text-slate-300">29</div>
-                        <div className="p-2 text-slate-300">30</div>
-                        <button type="button" className="p-2 hover:bg-primary/10 rounded-lg">1</button>
-                        <button type="button" className="p-2 hover:bg-primary/10 rounded-lg">2</button>
-                        <button type="button" className="p-2 hover:bg-primary/10 rounded-lg">3</button>
-                        <button type="button" className="p-2 hover:bg-primary/10 rounded-lg">4</button>
-                        <button type="button" className="p-2 bg-primary text-white font-bold rounded-lg shadow-lg shadow-primary/30">12</button>
-                        <button type="button" className="p-2 hover:bg-primary/10 rounded-lg">13</button>
-                        <button type="button" className="p-2 hover:bg-primary/10 rounded-lg">14</button>
-                        <button type="button" className="p-2 hover:bg-primary/10 rounded-lg">15</button>
-                        <button type="button" className="p-2 hover:bg-primary/10 rounded-lg font-bold text-slate-900 dark:text-white">16</button>
-                        <div className="p-2 text-slate-400">...</div>
-                        <div className="p-2 text-slate-400">...</div>
+                        {calendar.map((cell, i) => {
+                          const key = formatDateKey(cell.year, cell.month, cell.day);
+                          const isCurr = cell.type === "curr";
+                          const disabled = isCurr && isPast(cell.year, cell.month, cell.day);
+                          const selected = selectedDate === key;
+                          return (
+                            <button
+                              key={i}
+                              type="button"
+                              disabled={disabled}
+                              onClick={() => {
+                                if (disabled) return;
+                                setSelectedDate(key);
+                              }}
+                              className={`p-2 rounded-lg text-sm font-medium transition-colors ${
+                                cell.type !== "curr"
+                                  ? "text-slate-300 dark:text-slate-600 cursor-default"
+                                  : disabled
+                                    ? "text-slate-300 dark:text-slate-600 cursor-not-allowed"
+                                    : selected
+                                      ? "bg-primary text-white shadow-lg shadow-primary/30"
+                                      : "hover:bg-primary/10 text-slate-900 dark:text-white"
+                              }`}
+                            >
+                              {cell.day}
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
-                    <div className="w-1/3 p-6 bg-slate-50 dark:bg-slate-800/50">
+                    <div className="w-full sm:w-1/3 p-6 bg-slate-50 dark:bg-slate-800/50">
                       <h3 className="font-bold text-slate-900 dark:text-white mb-4">Available Slots</h3>
                       <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
-                        <button type="button" className="w-full py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:border-primary transition-all">09:00 AM</button>
-                        <button type="button" className="w-full py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:border-primary transition-all">10:30 AM</button>
-                        <button type="button" className="w-full py-2 bg-primary text-white border border-primary rounded-lg text-sm font-bold shadow-md">11:00 AM</button>
-                        <button type="button" className="w-full py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:border-primary transition-all">01:30 PM</button>
-                        <button type="button" className="w-full py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:border-primary transition-all">03:00 PM</button>
-                        <button type="button" className="w-full py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:border-primary transition-all">04:30 PM</button>
+                        {TIME_SLOTS.map((slot) => (
+                          <button
+                            key={slot}
+                            type="button"
+                            onClick={() => setSelectedTime(slot)}
+                            className={`w-full py-2 rounded-lg text-sm font-medium border transition-all ${
+                              selectedTime === slot
+                                ? "bg-primary text-white border-primary shadow-md"
+                                : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-primary"
+                            }`}
+                          >
+                            {slot}
+                          </button>
+                        ))}
                       </div>
                     </div>
                   </div>
                 </div>
               </section>
 
-              {/* Section 4: Personal Details */}
+              {/* Personal Details */}
               <section>
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 flex items-center justify-center font-bold">4</div>
@@ -178,29 +379,58 @@ export default function AppointmentPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">First Name</label>
-                    <input className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="e.g. John" type="text" />
+                    <input
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                      placeholder="e.g. John"
+                      type="text"
+                    />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Last Name</label>
-                    <input className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="e.g. Doe" type="text" />
+                    <input
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                      placeholder="e.g. Doe"
+                      type="text"
+                    />
                   </div>
                   <div className="space-y-2 md:col-span-2">
                     <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Email Address</label>
-                    <input className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="john.doe@example.com" type="email" />
+                    <input
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                      placeholder="john.doe@example.com"
+                      type="email"
+                    />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Phone Number</label>
-                    <input className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="+44 7000 000000" type="tel" />
+                    <input
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                      placeholder="+44 7000 000000"
+                      type="tel"
+                    />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Date of Birth</label>
-                    <input className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" type="date" />
+                    <input
+                      value={dateOfBirth}
+                      onChange={(e) => setDateOfBirth(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                      type="date"
+                    />
                   </div>
                 </div>
               </section>
             </div>
 
-            {/* Sidebar: Summary */}
+            {/* Sidebar Summary */}
             <div className="lg:col-span-1">
               <div className="sticky top-24 p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl">
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
@@ -210,24 +440,37 @@ export default function AppointmentPage() {
                 <div className="space-y-4 mb-8">
                   <div className="flex justify-between items-start pb-4 border-b border-slate-100 dark:border-slate-800">
                     <span className="text-sm text-slate-500 font-medium">Service</span>
-                    <span className="text-sm font-bold text-slate-900 dark:text-white text-right">Comprehensive Eye Test</span>
+                    <span className="text-sm font-bold text-slate-900 dark:text-white text-right">{service.name}</span>
                   </div>
                   <div className="flex justify-between items-start pb-4 border-b border-slate-100 dark:border-slate-800">
                     <span className="text-sm text-slate-500 font-medium">Location</span>
-                    <span className="text-sm font-bold text-slate-900 dark:text-white text-right">London City Center</span>
+                    <span className="text-sm font-bold text-slate-900 dark:text-white text-right">{location ?? "—"}</span>
                   </div>
                   <div className="flex justify-between items-start pb-4 border-b border-slate-100 dark:border-slate-800">
                     <span className="text-sm text-slate-500 font-medium">Date & Time</span>
-                    <span className="text-sm font-bold text-slate-900 dark:text-white text-right">Oct 12, 2023 at 11:00 AM</span>
+                    <span className="text-sm font-bold text-slate-900 dark:text-white text-right">{summaryDate}</span>
                   </div>
                   <div className="flex justify-between items-center pt-2">
                     <span className="text-base font-bold text-slate-900 dark:text-white">Total</span>
-                    <span className="text-xl font-black text-primary">£25.00</span>
+                    <span className="text-xl font-black text-primary">{service.price}</span>
                   </div>
                 </div>
                 <div className="space-y-3">
-                  <button className="w-full bg-primary text-white py-4 rounded-xl font-bold text-lg shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform">
-                    Confirm Booking
+                  {submitStatus === "success" && (
+                    <p className="text-sm text-green-600 dark:text-green-400 font-medium text-center">
+                      Booking sent successfully. We&apos;ll confirm via email.
+                    </p>
+                  )}
+                  {submitStatus === "error" && submitError && (
+                    <p className="text-sm text-red-600 dark:text-red-400 font-medium text-center">{submitError}</p>
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleConfirmBooking}
+                    disabled={submitting}
+                    className="w-full bg-primary text-white py-4 rounded-xl font-bold text-lg shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  >
+                    {submitting ? "Sending…" : "Confirm Booking"}
                   </button>
                   <p className="text-[10px] text-center text-slate-400">By confirming, you agree to our terms of service and patient privacy policy.</p>
                 </div>
@@ -251,7 +494,6 @@ export default function AppointmentPage() {
         </div>
       </main>
 
-      {/* Footer */}
       <footer className="bg-white dark:bg-background-dark border-t border-slate-200 dark:border-slate-800 py-12">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <div className="flex justify-center items-center gap-2 mb-4">
