@@ -504,7 +504,7 @@ export default function AppointmentPage() {
             </div>
             <span className="text-slate-400 font-bold uppercase tracking-widest text-sm">Kemold Opticals</span>
           </div>
-          <p className="text-slate-500 text-sm mb-6">Need help? Call us at +234 (0) 70 3132 2989 or email support@opticvision.com</p>
+          <p className="text-slate-500 text-sm mb-6">Need help? Call us at +234 (0) 70 3132 2989 or email igoldadeniyi@gmail.com</p>
           <div className="flex justify-center gap-6 text-slate-400 text-sm">
             <Link href="#" className="hover:text-primary">Privacy Policy</Link>
             <Link href="#" className="hover:text-primary">Terms of Service</Link>

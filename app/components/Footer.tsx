@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -6,8 +7,10 @@ export default function Footer() {
       <div className="max-w-[1280px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
         <div className="flex flex-col gap-6">
           <div className="flex items-center gap-3">
-            <span className="material-symbols-outlined text-3xl text-primary">visibility</span>
-            <span className="text-2xl font-bold">Kemold Opticals</span>
+            <span className="relative block h-10 w-10 shrink-0">
+              <Image src="/logo.png" alt="kemold opticals" fill className="object-contain" />
+            </span>
+            <span className="text-2xl font-bold">kemold opticals</span>
           </div>
           <p className="text-slate-400 text-sm leading-relaxed">
             Providing world-class eye care services and premium eyewear since 1994. Your vision is our expertise.
@@ -52,13 +55,13 @@ export default function Footer() {
             </li>
             <li className="flex items-center gap-3">
               <span className="material-symbols-outlined text-primary text-sm">mail</span>
-              hello@opticvision.com
+              igoldadeniyi@gmail.com
             </li>
           </ul>
         </div>
       </div>
       <div className="max-w-[1280px] mx-auto border-t border-slate-800 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
-        <p className="text-slate-500 text-xs">© 2024 OpticVision. All rights reserved.</p>
+        <p className="text-slate-500 text-xs">© 2024 kemold opticals. All rights reserved.</p>
         <div className="flex gap-6 text-slate-500 text-xs">
           <a href="#" className="hover:text-white">Privacy Policy</a>
           <a href="#" className="hover:text-white">Terms of Service</a>

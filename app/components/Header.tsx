@@ -1,17 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Header() {
   return (
     <header className="sticky top-0 z-50 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark px-6 md:px-20 py-4">
       <div className="flex items-center gap-10">
         <Link href="/" className="flex items-center gap-3 text-navy dark:text-primary">
-          <span className="size-6 text-primary">
-            <span className="material-symbols-outlined text-3xl">visibility</span>
+          <span className="relative h-9 w-9 shrink-0">
+            <Image src="/logo.png" alt="kemold opticals" fill className="object-contain" priority />
           </span>
           <h2 className="text-navy dark:text-white text-xl font-bold tracking-tight">
-          Kemold Opticals
+            kemold opticals
           </h2>
         </Link>
         <nav className="hidden lg:flex items-center gap-8">
